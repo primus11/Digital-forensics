@@ -3,7 +3,11 @@
     <type>org.netbeans.modules.python.project</type>
     <configuration>
         <data xmlns="http://nbpython.dev.java.net/ns/php-project/1">
+<<<<<<< HEAD
             <name>Digital-forensics</name>
+=======
+            <name>Forti</name>
+>>>>>>> 86caf4d6d7ddd9328ee12456607a14ea86a3ccf6
             <sources>
                 <root id="src.dir"/>
             </sources>
