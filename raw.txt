@@ -1,0 +1,57 @@
+Povzetek:
+Težko bi si pred 15 leti in veè zamislili, da bodo raèunalniki nekoè osrednji cilj forenziène preiskave. V drugem desetletju 21. stoletja, ko pa je èlovek postal zelo odvisen od raèunalnikov se to zdi kot nekaj nujno potrebnega. V tem èlanku bo opisanih nekaj osnovnih principov analize raèunalniške forenzike z operacijskim sistemom linux.
+
+Kljuène besede: forenzièna analiza, preiskava diskov, 
+
+Abstract:
+
+
+
+Uvod v forenzièno analizo:
+
+Znanost forenziène analize je strokovno orientirana za zbiranje in analizo dokazov. Tehnologija, ki se pri tem uporablja pa obsega raèunalnike ter programsko opremo. Kraj zloèina obsega raèunalnik, omrežje ter naprave na katere je priklopljen.
+
+Delo forenziènega preiskovalca, da kar najbolje zbere in preiskuje izvore dokazov kot so diski, zgodovine, prenosne medije in drugi. Pri tem je zelo pomembno, da se ohrani èimveè podatkov v originalni obliki ter, da se kar najbolje obnovi dogodke, ki so se pojavili ob doloèenem kaznivem dejanju.
+
+Vsako dejanje, ki se zgodi je lahko drugaèno in v enem primeru lahko obsega zgolj nek raèunalnik medtem, ko v drugem lahko obsega cele raèunalniške sisteme z ogromno kolièino podatkov z kompliciranem obsegom dogodkov.
+
+Preiskovanje se lahko v zaèetku velikokrat izkaže kot iskanje igle v senu, saj je lahko veliko stvari skritih. Prav tako velja, da ne obstaja nek recept, ki korak za korakom pove kaj je potrebno narediti, ampak se je situaciji potrebno sprotno prilagajati.
+
+Pomembno je, da pri vsaki preiskavi skrbno popisujemo vsak korak naše preiskave - na kakšen naèin smo pridobili dokaze, katere programe in tehnike smo pri tem uporabili. To je pomembno, da lahko tretja oseba ponovi celotni postopek še enkrat in pridobi enake rezultate. Prav tako nam to lahko v kasnejšem obdobju pomaga, da se spomnimo ter postopek, èe je le to potrebno povemo na sodišèu. Poleg tega pa nam lahko te zapiski pomagajo ob podobnih primerih, kar lahko znatno zmanjša stroške preiskave primera in sojenja nekega raèunalniškega kaznivega dejanja.
+
+Za forenzièno analizo je pomembno, da si za to pripravimo temu namenjen raèunalniški sistem s katerim bomo èimbolj uèinkovito prišli do želenih rezultatov. Le ta naj bi med drugim omogoèal analizo diskov, preiskovanje omrežij, brskalnikov, zgodovine in drugo. Primer takega sistema bi lahko bil sestavljen iz sledeèih komponent:
+-raèunalnik s hitrim procesorjem,
+-matièno plošèo z vsaj tremi IDE kontrolerji za trde diske, cd in dvd enote,
+-podporo za prenosne medije kot so npr. USB kljuèki,
+-vsaj dva velika trda diska, katera imata dovolj prostora za operacijski sistem, forenzièna orodja ter za kopiranje particij ter izbrisanih datotek iz dokaznega raèunalnika,
+-SCSI kartico, ki omogoèa prikljuèitev diskov, magnetnih trakov, skenerjev, printerjev,
+-magnetne trakove, ki omogoèajo shranjevanje velikih particij,
+-sistem mora imeti celotno podporo za omrežje na katerem pa ni zagnana nobena omrežna storitev razen SSH (ki se uporablja za prenos datotek in zavarovan oddaljen mrežni dostop),
+-operacijski sistem linux, kjer je ena boljših izbir Red Hat Linux - Shrike (linux izberemo, ker ima precej boljšo podporo od drugih operacijskih sistemov).
+
+Zelo priroèen pa je prenosni raèunalnik (ne mac), ki omogoèa, da "forenzièni laboratorij" prinesemo kar na mesto zloèina. 
+
+
+Priprava na analizo:
+
+Pred zaèetkom analize sistema je potrebno slediti istim osnovnim korakom za pripravo sistema.
+-V nekaterih primerih je pred razstavljanjem in premikanjem raèunalniški sistem potrebno slikati. To je potrebno že v osnovi, ko je v nekaterih primerih potrebno slikati kraj zloèina oz. v drugih primerih, ko je potrebno dokumentirati komponente sistema, kar nam kasneje omogoèa vrnitev sistema v prvotno stanje.
+-Potrebno je pisati dnevnik preiskave v katerega se èimbolj podrobno zapisuje celoten potek dela. Le ta vkljuèuje datum zaèetka preiskave ter zaèetek in konec doloèene aktivnosti. Zelo pomembno je tudi beleženje morebitnih prekinitev med aktivnostmi. Tak pristop služi sprotnemu ustvarjanju poroèila, ki je bolj konsistentno in detajlno kot, èe bi ga spisali na koncu. Taki podrobni zapiski bodo obèutno boljše pripomogli k predstavi celotnega zloèina, kot pa velika kolièina dokazov, ki se lahko naberejo tudi pri najmanjših raèunalniških zloèinih.
+-Preden zakljuèimo sistem je priporoèljivo zbrati osnovne informacije o disku, ki ne bo veè spremenjen s strani tretje osebe. Pod to spada zgradba datoteènega sistema (/etc/fstab), katerega prikaz lahko vidimo na sliki 'fstab.png', ime gostitelja in IP naslove iz (/etc/hosts), ki so prikazani na sliki 'hosts.png', naprave (/var/log/dmesg) in sistemska sporoèila (/var/log/syslog). To lahko najlažje naredimo s tar arhivom kot je prikazano na sliki 'sys_log.png'.
+-V kolikor je možno je nujno potrebno narediti kopijo celotnega diska ter delati na kopiji in ne na originalu! Èe delamo na originalu obstaja velika možnost, da zaradi majhne napake unièimo dokazno gradivo. Original moramo hraniti na varnem mestu, kjer ga ni možno unièiti ali spremeniti.
+-Ob zaèetku je potrebno priklopiti disk na prosta IDE vrata in zagnati sistem. Ob tem moramo biti zelo previdni, da ne unièimo diska. Èe nimamo prostih IDE vmesnikov potem izklopimo CD-ROM enoto iz IDE vmesnika in nanj prikljuèimo ta disk. V BIOSu je morda potrebno tudi preklopiti avtomatsko detekcijo tipa diska.
+-Zatem moramo identificirati particije na disku z uporabo ukaza "fdisk". Pri tem ukaza ne smemo uporabljati v interaktivnem naèinu, saj s tem lahko spremenimo particijsko tabelo. Prikaz uporabe ukaza oz. identifikacijo particij lahko vidmo na sliki 'partition_table.png'. Pri tem lahko opazimo lastnosti diska ter npr. predvidevamo, da je na /dev/sda1 linux sistem.
+-Zaradi varnostnih razlogov moramo generirati MD5 vsoto vsake particije, dobiti bitno sliko diska in preveriti s prej dobljenimi vsotami. (mt, dd, 5/27, morda potrebno še dodati). Èe se vsote ne ujemajo pomeni, da se je lahko pokvaril le en bit, kar pa se lahko pojavi npr. zaradi slabih sektorjev ali napake pri samem kopiranju.
+-Zatem je potrebno pripeti particijo za katero menimo, da je sistemska particija, ki pa je ne smemo spreminjati. Particijo pripnemo z ukazom "mount -r /dev/sda /mnt" in pri tem uporabimo samo bralni naèin. Iz pripete particije izpišemo vse datoteke z ukazom "ls -lat /mnt", kjer nato lahko tudi ugotovimo ali gre res za sistemosko particijo. Z pregledom "/mnt/etc/passwd" si lahko izpišemo uporabniške raèune, ki so bili ustvarjeni do sedaj. Pri tem smo pozorni na sumljiva imena. Te zapise si shranimo zato, da se kadarkoli kasneje lahko vrnemo nazaj in zaènemo preverjati sledi doloèenega uporabnika. Iz teh zapisov lahko naredimo razliène predpostavke o znanju vsiljivca ali lastnika raèunalnika ter pri tem pazimo, saj so lahko bili le ti tudi naèrtno uporabljeni kot diverzija za pravo zlorabo.
+-Poskušati moramo zgraditi pomembne dogodke jih povezati z doloèenimi aktivnostmi ter slediti do njihovega izvora. Po možnosti poskušamo tudi ponoviti napadalèeve korake in s tem odkriti njegov pravi namen ter ugotoviti s katerimi orodji in sistemi je izvedel napad.
+
+Od tu naprej pa se lahko zaène forenzièna analiza preiskave sistema z standarnimi UNIX orodji.
+
+
+Forenzièna analiza omrežja:
+Do nedavnega je veljalo, da je bilo pri preiskavi potrebno preverjati zgolj raèunalnik in predvsem disk posameznika. V zadnjem èasu, ko pa je omrežje postalo svetovno razširjeno in velika veèina ljudi uporablja e-maile, socialna omrežja, internetne trgovine, pretakanje preko spleta in druge omrežne storitve je pregledovanje postalo precej bolj prepleteno tudi z omrežjem. Forenzièni preiskovalci se morajo tako nauèiti še enega podroèja in poznati razlièna orodja. Med drugim morajo poznati standarde za internetne protokole, brskalnike, e-maile, prenos datotek kar jim je še dodatno oteženo zaradi hitro razvijajoèega podroèja. Možno je celo, da preiskovalci sploh nimajo dostopa do posameznega raèunalnika s èimer celotna analiza poteka preko spleta oz spletnih storitev in s pomoèjo internetnih ponudnikov, kreditnih kartic, telefonskih pogovorov in drugo.
+
+
+
+Zakljuèek:
+Zloèini zahtevajo pravico, ki pa mora biti pravièna in razumna.
