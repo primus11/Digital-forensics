@@ -51,6 +51,55 @@ Od tu naprej pa se lahko zaène forenzièna analiza preiskave sistema z standarnim
 Forenzièna analiza omrežja:
 Do nedavnega je veljalo, da je bilo pri preiskavi potrebno preverjati zgolj raèunalnik in predvsem disk posameznika. V zadnjem èasu, ko pa je omrežje postalo svetovno razširjeno in velika veèina ljudi uporablja e-maile, socialna omrežja, internetne trgovine, pretakanje preko spleta in druge omrežne storitve je pregledovanje postalo precej bolj prepleteno tudi z omrežjem. Forenzièni preiskovalci se morajo tako nauèiti še enega podroèja in poznati razlièna orodja. Med drugim morajo poznati standarde za internetne protokole, brskalnike, e-maile, prenos datotek kar jim je še dodatno oteženo zaradi hitro razvijajoèega podroèja. Možno je celo, da preiskovalci sploh nimajo dostopa do posameznega raèunalnika s èimer celotna analiza poteka preko spleta oz spletnih storitev in s pomoèjo internetnih ponudnikov, kreditnih kartic, telefonskih pogovorov in drugo.
 
+Postopki preiskovanja trdega diska za digitalnimi dokazi so dobro definirani. Ko pa se sreèamo z omrežjem pa lahko nastopijo neprièakovane ovire. Podatkov na omrežju je ogromno in so dinamièni, kar nam onemogoèa zajem celotnega stanja v doloèenem trenutku. V nasprotju z preiskovanjem enega raèunalnika preiskovalci ne morejo preprosto izklopiti celotnega interneta, saj morajo kljub preiskavi zagotavljati, èimbolj nemoteno delovanje omrežja. Poleg tega to tudi ne bi bilo smiselno, saj bi se ob izklopu izgubili vsi podatki. Naslednja težava je, da je na omrežju praktièno nemogoèe izolirati kraj zloèina, saj kriminalec napada iz veèih mest hkrati.
+
+Porazdelitev na veèjih delih omrežja pa je lahko tudi pozitivno, saj je tako težko unièiti vse dokaze. Podjetja velikokrat delajo varnostne kopije, ki jih hranijo na razliènih lokacijah, kar pomeni, da po vsej verjetnosti ne bodo unièili vseh podatkov.
+
+UNIX sistemi so veèinoma konfigurirani tako, da beležijo in hranijo uporabniške podatke za datoteke, e-maile in gesla za oddaljene dostope. Zato je pametno iskati sledi za oddaljene dostope na omrežju, ki lahko vodijo do dodatnih virov dokazov. Prvotnega pomena je, da se to naredi kar se, da hitro še predno se sledi izgubijo. 
+
+
+Pri tem postopku je pomembno, da na oddaljene lokacije dostopamo fizièno po standardnih postopkih in ne brez pravne podlage.
+
+DIGITALNI DOKAZI NA TCP/IP PLASTEH
+
+TCP/IP je skupni jezik vseh omrežij, osnova interneta in je poznan kot de facto standard. Je enostavnejši od OSI modela in med sabo združi nekatere plasti. Razdeljen je na 4 plasti:
+-Aplikacijska plast vsebuje naslednje protokole: telnet, ftp, http, smnp, smtp in druge.
+-Transportna plast ima protokole: TCP, UDP, ICMP.
+-Mrežna plast ima internetni protokol (IP).
+-Fizièna in povezavna plast pa ima ARPANET, paketni radio in LAN.
+
+Naloga fiziène plasti je, da skrbi za fizièni prenos podatkov. Mrežna plast skrbi za transparentno pošiljanje podatkov med mrežami. Dostava pri tem ni zagotovljena, niti vrstni red dostave. Povezava s povezavnim slojem je protokol ARP. Prenosna plast skrbi za povezavni in brezpovezavni naèin delovanja. TCP predstavlja tok podatkov med procesom na razliènih raèunalnikih. Aplikacijska plast služi uporabi standardnih (npr. pošta, splet, IRC in drugo) in nestandardnih aplikacij. Te aplikacije uporabljajo storitve spodnjih plasti.
+
+Dokaze sicer lahko dobimo iz veè naprav kot so raèunalniki, usmerjevalniki in drugih.
+
+
+Fizièna/povezavna plast:
+Fizièna in povezavna plast nudi temelj za vse kar najdemo na omrežju.
+Najbolj pogost naèin za zbiranje dokazov na omrežju je ti. prisluškovanje omrežju. Ta naèin zbiranja dokazov je primerljiv s tistim, ko naredimo kopijo trdega diska. 
+
+V nadaljevanju je zbranih nekaj orodij:
+
+-Z orodjem ifconfig lahko skonfiguriramo omrežne naprave. Uporablja se predsem ob zagonu za nastavitev vmesnikov ter kasneje za preverjanje ali nastavljanje. Z ukazom "ifconfig -a" lahko preverimo stanje vseh naprav. S tem tudi vidimo IP in MAC naslove.
+
+-ra
+
+-"arp" se uporablja za nastavljanje oz. prikaz ARP tabele relacij med IP in MAC naslovi. Omogoèa tudi brisanje oz. dodajanje zapisov. ARP oz. Address Resolution Protocol sicer služi preslikavi naslovov iz omrežne v povezavno plast.
+
+Omrežna plast:
+
+UNIX sistemi v "/etc/hosts" pogosto hranijo spisek povezav, ki pogosto komunicirajo med sabo. Za UNIX okolje so znaèilni lokalni in omrežni skupni diski, kateri so hranjeni v "/etc/fstab", saj so avtomatièno pripeti ob zagonu. Podobna informacija se nahaja tudi v "/etc/mtab" in "/proc/mounts", ki pa hranita tudi informacije o pripetih napravah preostalih posameznih uporabnikov. Poleg NFS se lahko s pomoèjo Samba orodij dostopa tudi do drugih omrežnih virov na Windows okolju.
+
+Transportna plast:
+
+ 
+
+Aplikacijska plast:
+
+UNIX raèunalnike lahko konfiguriramo tako, da sistemske podatke pošiljamo na oddaljen sistem s spremembo v datoteki "/etc/rsyslog.conf","/etc/syslog.conf". To naredimo z dodajanjem vrstice "*.* @IP:PORT". Podobno velja za tiskanje, kjer se hranijo informacije v datotetki "/etc/printcap".
+
+Pri preiskovanju na omrežjih je lahko velika kolièina podatkov nerelevantnih za doloèen primer. V tem primeru je pametno dobiti zgolj podatke, ki nas zanimajo, kjer si pomagamo npr. z filtriranjem glede na èas, IP naslov, neuspešne poskuse prijave ali glede na primer primerne kriterije. Primer lahko vidimo na sliki 'filter_tcpdump.png', ki uporablja nativno orodje linuxa oz. 'filter_tshark.png', ki uporablja orodje tshark.
+
+Eno izmed moènih orodij je nmap, ki nam omogoèa odkrivanje operacijskega sistema, skeniranje portov ali verzij programov. V zaèetku nam lahko zelo dobro služi za odkrivanje karakteristiènih znaèilnosti v omrežju. 
 
 
 Zakljuèek:
