@@ -57,6 +57,7 @@ Porazdelitev na veèjih delih omrežja pa je lahko tudi pozitivno, saj je tako tež
 
 UNIX sistemi so veèinoma konfigurirani tako, da beležijo in hranijo uporabniške podatke za datoteke, e-maile in gesla za oddaljene dostope. Zato je pametno iskati sledi za oddaljene dostope na omrežju, ki lahko vodijo do dodatnih virov dokazov. Prvotnega pomena je, da se to naredi kar se, da hitro še predno se sledi izgubijo. 
 
+UNIX sistemi v "/etc/hosts" pogosto hranijo spisek povezav, ki pogosto komunicirajo med sabo. Za UNIX okolje so znaèilni lokalni in omrežni skupni diski, kateri so hranjeni v "/etc/fstab", saj so avtomatièno pripeti ob zagonu. Podobna informacija se nahaja tudi v "/etc/mtab" in "/proc/mounts", ki pa hranita tudi informacije o pripetih napravah preostalih posameznih uporabnikov. Poleg NFS se lahko s pomoèjo Samba orodij dostopa tudi do drugih omrežnih virov na Windows okolju. UNIX raèunalnike lahko konfiguriramo tako, da sistemske podatke pošiljamo na oddaljen sistem s spremembo v datoteki "/etc/rsyslog.conf","/etc/syslog.conf". To naredimo z dodajanjem vrstice "*.* @IP:PORT". Podobno velja za tiskanje, kjer se hranijo informacije v datotetki "/etc/printcap".
 
 Pri tem postopku je pomembno, da na oddaljene lokacije dostopamo fizièno po standardnih postopkih in ne brez pravne podlage.
 
@@ -74,32 +75,35 @@ Dokaze sicer lahko dobimo iz veè naprav kot so raèunalniki, usmerjevalniki in dr
 
 
 Fizièna/povezavna plast:
-Fizièna in povezavna plast nudi temelj za vse kar najdemo na omrežju.
+Fizièna in povezavna plast nudi temelj za vse mapkar najdemo na omrežju.
 Najbolj pogost naèin za zbiranje dokazov na omrežju je ti. prisluškovanje omrežju. Ta naèin zbiranja dokazov je primerljiv s tistim, ko naredimo kopijo trdega diska. 
+
+
 
 V nadaljevanju je zbranih nekaj orodij:
 
 -Z orodjem ifconfig lahko skonfiguriramo omrežne naprave. Uporablja se predsem ob zagonu za nastavitev vmesnikov ter kasneje za preverjanje ali nastavljanje. Z ukazom "ifconfig -a" lahko preverimo stanje vseh naprav. S tem tudi vidimo IP in MAC naslove.
 
--ra
-
 -"arp" se uporablja za nastavljanje oz. prikaz ARP tabele relacij med IP in MAC naslovi. Omogoèa tudi brisanje oz. dodajanje zapisov. ARP oz. Address Resolution Protocol sicer služi preslikavi naslovov iz omrežne v povezavno plast.
 
-Omrežna plast:
+Naslove raèunalnikov lahko dobimo tudi iz ARP tabel ali zgodovine DHCP na usmerjevalniku. DHCP med drugim hrani informacije o MAC naslovu, IP naslovu, èasu dodelitve in odvzema ter imenu raèunalnika.
 
-UNIX sistemi v "/etc/hosts" pogosto hranijo spisek povezav, ki pogosto komunicirajo med sabo. Za UNIX okolje so znaèilni lokalni in omrežni skupni diski, kateri so hranjeni v "/etc/fstab", saj so avtomatièno pripeti ob zagonu. Podobna informacija se nahaja tudi v "/etc/mtab" in "/proc/mounts", ki pa hranita tudi informacije o pripetih napravah preostalih posameznih uporabnikov. Poleg NFS se lahko s pomoèjo Samba orodij dostopa tudi do drugih omrežnih virov na Windows okolju.
+Omrežna in transportna plast:
+Vsak komunikacijski sistem potrebuje mehanizem naslavlanja. Pogosto, ni pa nujno je potreben tudi nek sistem preverjanja, da je sporoèilo prišlo na cilj. Omrežna in transportna plast sta skupaj odgovorni za pravilno dostavljanje paketov. Veliko kolièino shranjenih informacij se pridobi prav iz teh dveh plasti, kar nam zelo služi v digitalnem preiskovanju. Pomembni na tej plasti so predvsem IP naslovi in z njimi povezana DNS imena, ki nam pomagajo doloèiti izvor zloèina. 
 
-Transportna plast:
+-Orodje "nslookup" nam omogoèa pretvorbo med IP naslovom in DNS imenom, kar lahko vidimo na sliki 'nslookup.png'.
 
- 
+-Z "dig" lahko poizvedujemo o pripadajoèih DNS strežnikih. Obèasno pri tem lahko dobimo tudi informacije o drugih raèunalnikih, ki uporabljajo DNS strežnik, a strežniki tega veèinoma ne dopušèajo, saj napadalci lahko to s pridom izkorišèajo.
+
+-Druge še zelo uporabno orodje je tudi "traceroute", ki nam omogoèa sledenje paketov po vozlišèih, ki jih obišèe paket, da doseže ciljni IP. To nam v digitalnem preiskovanju lahko pride zelo prav, saj veèinoma poti ostajajo iste kar nam omogoèa, da naredimo dodatno preiskovanje na vozlišèih ali DNS strežnikih, kjer se dodatno beležijo podatki o prenosih.
+
+-Aplikacije za svojo delovanje uporabljajo doloèena vrata. Za preverjanje ali pa doloèena aplikacija deluje lahko uporabimo orodje "nmap". To orodje nam dodatno omogoèa tudi npr. odkrivanje operacijskega sistema ali verzij programov, ki so lahko povezani tudi z doloèenimi varnostnimi luknjami. V zaèetku nam lahko zelo dobro služi za odkrivanje karakteristiènih znaèilnosti v omrežju.
+
+-Orodje "netstat" nam lahko izpiše aktivne povezave našega raèunalnika, kar nam ob pomoèi orodja "nmap" lahko služi kot doloèanje aktivivnih aplikacij kot je npr. VNC ali skupni vir z drugim raèunalnikom. Na ta naèin lahko pridemo do dodatnih virov informacij, ki jih je potrebno raziskati.
 
 Aplikacijska plast:
 
-UNIX raèunalnike lahko konfiguriramo tako, da sistemske podatke pošiljamo na oddaljen sistem s spremembo v datoteki "/etc/rsyslog.conf","/etc/syslog.conf". To naredimo z dodajanjem vrstice "*.* @IP:PORT". Podobno velja za tiskanje, kjer se hranijo informacije v datotetki "/etc/printcap".
-
 Pri preiskovanju na omrežjih je lahko velika kolièina podatkov nerelevantnih za doloèen primer. V tem primeru je pametno dobiti zgolj podatke, ki nas zanimajo, kjer si pomagamo npr. z filtriranjem glede na èas, IP naslov, neuspešne poskuse prijave ali glede na primer primerne kriterije. Primer lahko vidimo na sliki 'filter_tcpdump.png', ki uporablja nativno orodje linuxa oz. 'filter_tshark.png', ki uporablja orodje tshark.
-
-Eno izmed moènih orodij je nmap, ki nam omogoèa odkrivanje operacijskega sistema, skeniranje portov ali verzij programov. V zaèetku nam lahko zelo dobro služi za odkrivanje karakteristiènih znaèilnosti v omrežju. 
 
 
 Zakljuèek:
